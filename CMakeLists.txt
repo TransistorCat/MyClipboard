@@ -8,5 +8,6 @@ project(MyClipboard VERSION 0.1 LANGUAGES CXX)
 # add_subdirectory(Data)
 
 add_subdirectory(Window)
-# include_directories("core")
+add_subdirectory(Data)
+
 # include_directories("chess_play")

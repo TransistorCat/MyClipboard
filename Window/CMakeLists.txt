@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Sql Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES MyClipboard_zh_CN.ts)
@@ -26,6 +27,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MyClipboard
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+
+
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MyClipboard APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -50,6 +55,8 @@ else()
 endif()
 
 target_link_libraries(MyClipboard PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(MyClipboard PRIVATE Qt${QT_VERSION_MAJOR}::Sql)
+target_link_libraries(MyClipboard PRIVATE Qt${QT_VERSION_MAJOR}::Test)
 # target_link_libraries(MyClipboard PRIVATE Core)
 # target_link_libraries(${PROJECT_NAME} PRIVATE chess_play)
 # target_link_libraries(${PROJECT_NAME} PRIVATE FEN)
@@ -74,6 +81,7 @@ install(TARGETS MyClipboard
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(MyClipboard)
