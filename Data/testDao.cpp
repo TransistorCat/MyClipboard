@@ -1,14 +1,26 @@
 
 #include "testDao.h"
 
-#include "dao.h"
-// #include "testDao.moc"
+// #include "dao.h"
 
-void TestDao::Init()
+
+void TestDao::testInit()
 {
-    Dao Dao;
-    QCOMPARE(Dao.Init(), 1);
+    // Dao Dao;
+    QCOMPARE(Dao.init(), 0);
 
 }
+
+void TestDao::testInsertOneData()
+{
+    Dao.init();
+    QString a("Fuck CPP!");
+    Data d(a);
+    QCOMPARE(Dao.insertOneData(d), 0);
+
+}
+
+
 QTEST_MAIN(TestDao)
 
+#include "testDao.moc"
