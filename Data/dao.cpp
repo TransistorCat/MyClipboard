@@ -14,7 +14,7 @@ bool Dao::init(const QString &DatabaseName){
     if (!db.open()){
         qDebug()<<"Error: mydb can`t open";
 
-        return 1;
+        return false;
     }
 
     //create data
@@ -26,14 +26,14 @@ bool Dao::init(const QString &DatabaseName){
     QSqlQuery query(db);
     if (!query.exec(create_sql)) {
         qDebug() << "Error: failed to create table";
-        return 1;
+        return false;
     } else {
         qDebug() << "Table created successfully";
 
     }
 
 
-    return 0;
+    return true;
 }
 
 bool Dao::insertOneData(const Data &data)
@@ -48,10 +48,9 @@ bool Dao::insertOneData(const Data &data)
     if(!model.submitAll()){
         qDebug()<<"Error: fail insert ("<<data.content<<")"<<model.lastError().text();
 
-        // qDebug()<<
-        return 1;
+        return false;
     }
-    return 0;
+    return true;
 }
 
 bool Dao::query(QVector<Data> &datas, int startRow, int n)
@@ -82,7 +81,7 @@ bool Dao::query(QVector<Data> &datas, int startRow, int n)
         Data data(id,created_at,content);
         datas.push_back(data);
     }
-    return 0;
+    return true;
 }
 
 bool Dao::close(const QString &DatabaseName)
@@ -90,6 +89,6 @@ bool Dao::close(const QString &DatabaseName)
     db = QSqlDatabase(); //make DatabaseName unuse
     db.close();
     QSqlDatabase::removeDatabase(DatabaseName);
-    return 0;
+    return true;
 }
 

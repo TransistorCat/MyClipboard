@@ -7,14 +7,14 @@ const QString Constants::testDB = "test.db";
 void TestDao::testInit()
 {
     // Dao Dao;
-    QCOMPARE(Dao.init(Constants::testDB), 0);
+    QCOMPARE(Dao.init(Constants::testDB), true);
 }
 
 void TestDao::testInsertOneData()
 {
     Dao.init(Constants::testDB);
     Data testData("Fuck Cpp!");
-    QCOMPARE(Dao.insertOneData(testData), 0);
+    QCOMPARE(Dao.insertOneData(testData), true);
 
 
 }

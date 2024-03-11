@@ -19,7 +19,7 @@ public:
 
 class Dao{
 public:
-    bool init (const QString&);
+    bool init (const QString& DatabaseName="user.db");
     bool insertOneData(const Data&);
     bool deleteOneData();
     bool query(QVector<Data>&,int,int);
