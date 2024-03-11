@@ -9,7 +9,7 @@
 class Data
 {
 public:
-    Data(QString &data):content(data){};
+    Data(const QString &data):content(data){};
     Data(int id,QString& time,QString& data):id(id),created_at(time),content(data){};
 
     int id;
@@ -19,10 +19,11 @@ public:
 
 class Dao{
 public:
-    bool init ();
-    bool insertOneData(Data&);
+    bool init (const QString&);
+    bool insertOneData(const Data&);
     bool deleteOneData();
-    bool query(Data*,int,int);
+    bool query(QVector<Data>&,int,int);
+    bool close(const QString &DatabaseName);
 private:
     QSqlDatabase db;
 };

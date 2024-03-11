@@ -4,7 +4,12 @@
 #include <QTest>
 
 
+#include <QString>
 
+class Constants {
+public:
+    static const QString testDB;
+};
 
 class TestDao: public QObject
 {
@@ -13,6 +18,8 @@ class TestDao: public QObject
 private slots:
     void testInit();
     void testInsertOneData();
+    void testQuery();
+    void cleanup();
 
 };
 #endif // TESTDAO_H
