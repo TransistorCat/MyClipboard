@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     Service s;
     s.start();
-    s.readClipboard();
+    // s.readClipboard();
 
 
     // MainWindow w;

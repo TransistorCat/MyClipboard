@@ -2,7 +2,7 @@
 
 class Service {
 public:
-    bool readClipboard();
+    bool readClipboard(QClipboard *clipboard);
     bool start();
 private:
     Dao dao;
