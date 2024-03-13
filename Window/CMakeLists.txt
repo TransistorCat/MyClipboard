@@ -27,6 +27,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MyClipboard
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        window.qrc
+        systemtrayicon.h systemtrayicon.cpp
 
 
 

@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "systemtrayicon.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -19,5 +20,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    SystemTrayIcon *systemTrayIcon;
+
+private slots:
+    void closeEvent(QCloseEvent *event) override;
+
+
 };
 #endif // MAINWINDOW_H

@@ -20,7 +20,7 @@ bool Service::readClipboard(QClipboard *clipboard)
         if (!dir.exists()) {
             if (!dir.mkpath("./")) {
                 qDebug() << "Failed to create directory";
-                return 1;
+                return false;
             }
         }
         if (currentData == lastClipboardData) {
