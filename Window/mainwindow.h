@@ -26,5 +26,7 @@ private slots:
     void closeEvent(QCloseEvent *event) override;
 
 
+    // void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
 };
 #endif // MAINWINDOW_H
