@@ -84,6 +84,35 @@ bool Dao::query(QVector<Data> &datas, int startRow, int n)
     return true;
 }
 
+bool Dao::query(QVector<Data> &datas, QString &queryString)
+{
+    QSqlTableModel model(nullptr, db);
+    model.setTable("data");
+    model.select();
+
+    QVector<Data> resultVector;
+
+
+
+    for (int i = 0; i < model.rowCount(); ++i) {
+        QSqlRecord record = model.record(i);
+        QString content = record.value(2).toString();
+
+        if (content.contains(queryString)) {
+            int id=record.value(0).toInt();
+            QString created_at=record.value(1).toString();
+            QString content=record.value(2).toString();
+            Data data(id,created_at,content);
+
+            resultVector.append(data);
+        }
+    }
+
+    datas = resultVector;
+
+    return true; // 或者根据情况返回false
+}
+
 bool Dao::close(const QString &DatabaseName)
 {
     db = QSqlDatabase(); //make DatabaseName unuse

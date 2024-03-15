@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "service.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -15,10 +14,11 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     // a.setStyle(QStyleFactory::create("fusion"));
      // a.setAttribute(Qt::AA_DontUseNativeMenuBar, false);
-    Service s;
-    s.start();
+    // Service s;
+    // QVector<Data> datas;
+    // s.start();
     // s.readClipboard();
-
+    // datas=s.queryDB();
 
     MainWindow w;
     QIcon icon(":/image/icon.svg");

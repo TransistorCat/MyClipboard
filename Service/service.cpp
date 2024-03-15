@@ -46,6 +46,20 @@ bool Service::readClipboard(QClipboard *clipboard)
     return true;
 }
 
+QVector<Data> Service::queryDB()
+{
+    QVector<Data> tempDatas;
+    dao.query(tempDatas,1,1000);
+    return tempDatas;
+}
+
+QVector<Data> Service::queryDB(QString &queryString)
+{
+    QVector<Data> tempDatas;
+    dao.query(tempDatas,queryString);
+    return tempDatas;
+}
+
 bool Service::start()
 {
     if(!dao.init()){

@@ -23,6 +23,7 @@ public:
     bool insertOneData(const Data&);
     bool deleteOneData();
     bool query(QVector<Data>&,int,int);
+    bool query(QVector<Data>&,QString&);
     bool close(const QString &DatabaseName);
 private:
     QSqlDatabase db;
