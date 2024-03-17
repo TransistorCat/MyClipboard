@@ -5,16 +5,36 @@
 #include <QDebug>
 #include <QFileInfo>
 #include "qsqldatabase.h"
+enum class Type:int{
+    all,text,image,file
+};
 
-class Data
+enum class Time:int{
+    all,today,yesterday,week,custom
+};
+
+
+
+struct Data
 {
-public:
-    Data(const QString &data):content(data){};
-    Data(int id,QString& time,QString& data):id(id),created_at(time),content(data){};
+    Data(const QString &data,Type type):content(data),type(type){};
+    Data(int id,QString& time,QString& content,Type type,const QString &tap=""):id(id),createAt(time),content(content),type(type),tap(tap){};
 
     int id;
-    QString created_at;
+    Type type;
+    QString createAt;
     QString content;
+    QString tap;
+};
+
+struct Filter{
+    Filter();
+    enum Time time;
+    enum Type type;
+    QDate startTime;
+    QDate endTime;
+    QString content;
+    QString tap;
 };
 
 class Dao{
@@ -22,8 +42,8 @@ public:
     bool init (const QString& DatabaseName="user.db");
     bool insertOneData(const Data&);
     bool deleteOneData();
-    bool query(QVector<Data>&,int,int);
-    bool query(QVector<Data>&,QString&);
+    unsigned int query(QVector<Data>&, int, int, Filter &);
+    // bool query(QVector<Data>&,);
     bool close(const QString &DatabaseName);
 private:
     QSqlDatabase db;

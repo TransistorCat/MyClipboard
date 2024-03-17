@@ -23,7 +23,8 @@ private:
     Ui::MainWindow *ui;
     Service *service;
     SystemTrayIcon *systemTrayIcon;
-    void insertTableItem(const QVector<Data> &);
+    Filter *filter;
+    void insertTableItem();
 
 private slots:
     void closeEvent(QCloseEvent *event) override;
@@ -34,5 +35,10 @@ private slots:
     void on_refreshToolButton_clicked();
     void on_findToolButton_clicked();
     void on_pushButton_clicked();
+    void on_spinBox_valueChanged(int arg1);
+    void on_timeTreeWidget_itemSelectionChanged();
+    void on_typeTreeWidget_itemSelectionChanged();
+    void on_lineEdit_textChanged(const QString &arg1);
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
 };
 #endif // MAINWINDOW_H

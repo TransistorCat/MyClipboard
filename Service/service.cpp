@@ -9,11 +9,15 @@ bool Service::readClipboard(QClipboard *clipboard)
 
     // 监听剪贴板内容改变信号
     const QMimeData *mimeData = clipboard->mimeData();
+    QString clipboardText = clipboard->text();
+    QFile file(clipboardText);
     if (mimeData->hasImage()) {
         // 从剪贴板中获取图片
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
         QByteArray currentData = mimeData->data("image/png");
-        QString saveDir="./Images/";
+        QDir currentDir = QDir::current();
+        QString currentPath = currentDir.absolutePath();
+        QString saveDir=currentPath+"/Images/";
         QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
         QString savePath = saveDir + timestamp + ".png"; // 替换为您想要保存的路径和文件格式
         QDir dir(saveDir);
@@ -34,31 +38,28 @@ bool Service::readClipboard(QClipboard *clipboard)
         } else {
             qDebug() << "Image saved successfully";
         }
-        dao.insertOneData(savePath);
+        dao.insertOneData(Data(savePath,Type::image));
         // 创建一个标签用于显示图片
 
+    }else if(file.exists()){
+        dao.insertOneData(Data(clipboardText,Type::file));
+        qDebug() << "FileDir save:" << clipboardText;
     }else{
-        QString clipboardText = clipboard->text();
-        dao.insertOneData(Data(clipboardText));
+        dao.insertOneData(Data(clipboardText,Type::text));
         qDebug() << "Clipboard content changed:" << clipboardText;
     }
 
     return true;
 }
 
-QVector<Data> Service::queryDB()
+
+QueryResult Service::queryDB( int startRow, int n, Filter &filters)
 {
-    QVector<Data> tempDatas;
-    dao.query(tempDatas,1,1000);
-    return tempDatas;
+    QueryResult q;
+    q.rowCount=dao.query(q.datas,startRow,n,filters);
+    return q;
 }
 
-QVector<Data> Service::queryDB(QString &queryString)
-{
-    QVector<Data> tempDatas;
-    dao.query(tempDatas,queryString);
-    return tempDatas;
-}
 
 bool Service::start()
 {

@@ -140,7 +140,7 @@
          <property name="maximumSize">
           <size>
            <width>105</width>
-           <height>90</height>
+           <height>105</height>
           </size>
          </property>
          <column>
@@ -161,6 +161,11 @@
          <item>
           <property name="text">
            <string>image</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>file</string>
           </property>
          </item>
         </widget>
@@ -391,7 +396,19 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget"/>
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
