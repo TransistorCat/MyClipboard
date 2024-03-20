@@ -1,38 +1,42 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef DATAPANEL_H
+#define DATAPANEL_H
 
-#include "systemtrayicon.h"
+#include "customtimepanel.h"
+#include "qtablewidget.h"
 #include "service.h"
+
 #include <QMainWindow>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+class DataPanel;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class DataPanel : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    DataPanel(QWidget *parent = nullptr, Service *service=nullptr);
+    void setService(Service *);
+    ~DataPanel();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::DataPanel *ui;
+    CustomTimePanel *timePanel;
     Service *service;
-    SystemTrayIcon *systemTrayIcon;
     Filter *filter;
     void insertTableItem();
 
 private slots:
-    void closeEvent(QCloseEvent *event) override;
+    // void closeEvent(QCloseEvent *event) override;
 
 
     // void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 
-    void on_refreshToolButton_clicked();
+    // void on_refreshToolButton_clicked();
     void on_findToolButton_clicked();
     void on_pushButton_clicked();
     void on_spinBox_valueChanged(int arg1);
@@ -40,5 +44,7 @@ private slots:
     void on_typeTreeWidget_itemSelectionChanged();
     void on_lineEdit_textChanged(const QString &arg1);
     void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+
+    void on_timeTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
 };
-#endif // MAINWINDOW_H
+#endif // DATAPANEL_H

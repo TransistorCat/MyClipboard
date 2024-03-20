@@ -17,9 +17,9 @@ set(TS_FILES MyClipboard_zh_CN.ts)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        datapanel.cpp
+        datapanel.h
+        datapanel.ui
         ${TS_FILES}
 )
 
@@ -29,7 +29,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         window.qrc
         systemtrayicon.h systemtrayicon.cpp
-        querytable.h querytable.cpp
+        customtimepanel.h customtimepanel.cpp customtimepanel.ui
+
 
 
 

@@ -1,16 +1,19 @@
-#include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "datapanel.h"
+#include "./ui_datapanel.h"
+#include "qclipboard.h"
+#include "qevent.h"
 
-MainWindow::MainWindow(QWidget *parent)
+DataPanel::DataPanel(QWidget *parent, Service *service)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::DataPanel)
 {
 
     ui->setupUi(this);
-    service=new Service;
-    service->start();
     filter=new Filter;
-    ui->timeTreeWidget->topLevelItem(0)->setSelected(true);
+
+    this->service=service;
+    timePanel=new CustomTimePanel(this);
+     ui->timeTreeWidget->topLevelItem(0)->setSelected(true);
      ui->typeTreeWidget->topLevelItem(0)->setSelected(true);
      ui->tapTreeWidget->topLevelItem(0)->setSelected(true);
      ui->tableWidget->setColumnCount(3);
@@ -23,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
      ui->tableWidget->verticalHeader()->setVisible(false);
      ui->tableWidget->verticalHeader()->setDefaultSectionSize(50);
      ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+     QIcon icon(":/image/icon.svg");
+
+     this->setWindowIcon(icon);
 
      // insertTableItem(service->queryDB());
     // ui->horizontalLayout.
@@ -33,22 +39,29 @@ MainWindow::MainWindow(QWidget *parent)
     // // 创建按钮
     // QPushButton *button = new QPushButton(treeWidget);
     // button->setText("Button");
-    // treeWidget->setItemWidget(item, 0, button);
-
-    systemTrayIcon = new SystemTrayIcon(this);
+     // treeWidget->setItemWidget(item, 0, button);
 }
 
-MainWindow::~MainWindow()
+void DataPanel::setService(Service *service)
+{
+    this->service=service;
+}
+
+DataPanel::~DataPanel()
 {
     delete ui;
 }
 
-void MainWindow::insertTableItem()
+void DataPanel::insertTableItem()
 {
     ui->tableWidget->setRowCount(0);
     int onePageItemN=50;
     auto n =ui->spinBox->value()-1;
-    auto result =service->queryDB(n*onePageItemN,(n+1)*onePageItemN,*filter);
+    qDebug()<<n;
+    auto result =service->queryDB(n*onePageItemN,onePageItemN,*filter);
+
+    ui->progressBar_2->setMaximum(result.datas.size()+25);
+    ui->progressBar_2->setValue(25);
     ui->spinBox->setMaximum(result.rowCount/onePageItemN+1);
     ui->label->setText("/ "+QString::number(result.rowCount/onePageItemN+1));
     QTableWidgetItem *item[3];
@@ -72,19 +85,21 @@ void MainWindow::insertTableItem()
 
 
         ui->tableWidget->setItem(i, 2, item[2]);
+        ui->progressBar_2->setValue(ui->progressBar_2->value()+1);
     }
-
+    qDebug()<<ui->progressBar_2->value();
+     qDebug()<<ui->progressBar_2->maximum();
 
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-    event->ignore(); // 忽略窗口关闭事件
-    hide(); // 隐藏窗口
-}
+// void DataPanel::closeEvent(QCloseEvent *event) {
+    // event->ignore(); // 忽略窗口关闭事件
+    // hide(); // 隐藏窗口
+// }
 
 
 
-// void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+// void DataPanel::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 // {
 //     ui->lineEdit->setText(item->text(column));
 //     if(item->parent()!=nullptr&&item->parent()->text(0)=="time"){
@@ -107,57 +122,49 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 //     }
 // }
 
-void MainWindow::on_refreshToolButton_clicked(){
-// int nCount=ui->tableWidget->rowCount();
-    // Filter filter;
-    // ui->tableWidget->setRowCount(0);
-    // auto result =ui->spinBox->value()-1;
-    // auto r =service->queryDB(result*100,(result+1)*100,filter);
-    // insertTableItem(r.datas);
-}
 
 
-void MainWindow::on_findToolButton_clicked()
+
+void DataPanel::on_findToolButton_clicked()
 {
     filter->content=ui->lineEdit->text();
     ui->spinBox->setValue(1);
     insertTableItem();
 }
 
-std::string generateRandomComment() {
-    // 可以根据需要修改评论的内容或者长度
-    std::vector<std::string> comments = {
-        "This is a great product!",
-        "I love this!",
-        "Not bad.",
-        "Could be better.",
-        "Amazing!",
-        "Terrible...",
-        "It's okay.",
-        "I'm not impressed.",
-        "Would recommend!",
-        "Don't waste your money."
-    };
 
-    // 生成随机评论
-    int index = rand() % comments.size();
-    return comments[index];
-}
 
-// void make(){
-//     // 设置随机数种子
-//     srand(time(nullptr));
 
-//     // 生成一万条随机评论
-
-void MainWindow::on_pushButton_clicked()
+void DataPanel::on_pushButton_clicked()
 {
     QList<QTableWidgetItem *> selectedItems = ui->tableWidget->selectedItems();
     QString text;
     QString filePath=selectedItems[0]->text();
     QFile file(filePath);
-    if(selectedItems.size()==1&&file.exists()){
-        //把文件拷贝到剪贴板
+     QImageReader reader(filePath);
+    // if(selectedItems.size()==1&&file.exists()&&reader.canRead()){
+    //      QImage *image=new QImage();
+    //      image->load(filePath);
+
+    //      QClipboard *clip=QApplication::clipboard();
+    //      clip->setPixmap(QPixmap::fromImage(*image));
+    //      return;
+
+    //  }else
+     if(selectedItems.size()==1&&file.exists()){
+        QList<QUrl> copyfile;
+        QUrl url=QUrl::fromLocalFile(filePath);
+        if(url.isValid()){
+            copyfile.push_back(url);
+        }else{
+            return;
+        }
+        QMimeData *data=new QMimeData;
+        data->setUrls(copyfile);
+
+        QClipboard *clip=QApplication::clipboard();
+        clip->setMimeData(data);
+        return;
     }
     // 将选中的项的文本添加到字符串中
     for (int i = 0; i < selectedItems.size(); ++i) {
@@ -171,39 +178,38 @@ void MainWindow::on_pushButton_clicked()
 }
 
 
-void MainWindow::on_spinBox_valueChanged(int arg1)
+void DataPanel::on_spinBox_valueChanged(int arg1)
 {
-
 
     insertTableItem();
 }
 
 
-void MainWindow::on_timeTreeWidget_itemSelectionChanged()
+void DataPanel::on_timeTreeWidget_itemSelectionChanged()
 {
-    auto selectItem=ui->timeTreeWidget->selectedItems();
-    auto text=selectItem[0]->text(0);
-    qDebug()<<text;
-    if (text=="today"){
-        filter->time=Time::today;
-    }
-    if (text=="yesterday"){
-        filter->time=Time::yesterday;
-    }
-    if (text=="week"){
-        filter->time=Time::week;
-    }
-    if (text=="custom"){
-        filter->time=Time::today;
-    }
-    if (text=="all"){
-        filter->time=Time::all;
-    }
-insertTableItem();
+    // auto selectItem=ui->timeTreeWidget->selectedItems();
+    // auto text=selectItem[0]->text(0);
+    // qDebug()<<text;
+    // if (text=="today"){
+    //     filter->time=Time::today;
+    // }
+    // if (text=="yesterday"){
+    //     filter->time=Time::yesterday;
+    // }
+    // if (text=="week"){
+    //     filter->time=Time::week;
+    // }
+    // if (text=="custom"){
+    //     timePanel->show();
+    // }
+    // if (text=="all"){
+    //     filter->time=Time::all;
+    // }
+    // insertTableItem();
 }
 
 
-void MainWindow::on_typeTreeWidget_itemSelectionChanged()
+void DataPanel::on_typeTreeWidget_itemSelectionChanged()
 {
     auto selectItem=ui->typeTreeWidget->selectedItems();
     auto text=selectItem[0]->text(0);
@@ -224,7 +230,7 @@ void MainWindow::on_typeTreeWidget_itemSelectionChanged()
 }
 
 
-void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+void DataPanel::on_lineEdit_textChanged(const QString &arg1)
 {
     filter->content=arg1;
     ui->spinBox->setValue(1);
@@ -232,7 +238,7 @@ void MainWindow::on_lineEdit_textChanged(const QString &arg1)
 }
 
 
-void MainWindow::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+void DataPanel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 
 {
     QFile file(item->text());
@@ -240,5 +246,41 @@ void MainWindow::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
         QString filePath = item->text();
         QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
     }
+}
+
+
+
+
+
+void DataPanel::on_timeTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    auto text=item->text(column);
+    qDebug()<<text;
+    if (text=="today"){
+        filter->time=Time::today;
+    }
+    if (text=="yesterday"){
+        filter->time=Time::yesterday;
+    }
+    if (text=="week"){
+        filter->time=Time::week;
+    }
+    if (text=="custom"){
+        filter->time=Time::custom;
+        timePanel->show();
+        auto test= timePanel->exec() ;
+        if (test== QDialog::Accepted) {
+            // 如果对话框被接受（即确认按钮被点击）
+            qDebug()<<"Accepted"<<test;
+            filter->startTime = timePanel->GetStartDate();
+            filter->endTime = timePanel->GetEndData();
+        } else {
+            qDebug()<<"Rejected"<<test;
+        }
+    }
+    if (text=="all"){
+        filter->time=Time::all;
+    }
+    insertTableItem();
 }
 

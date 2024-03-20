@@ -2,14 +2,14 @@
 
 // SystemTrayIcon::SystemTrayIcon() {}
 
-void SystemTrayIcon::createTrayIcon(QWidget *parent) {
-    trayIconMenu = new QMenu(parent);
-    trayIconMenu->addAction("Dashboard",parent,&QWidget::show);
+void SystemTrayIcon::createTrayIcon() {
+    trayIconMenu = new QMenu();
+    trayIconMenu->addAction("DataPanel",datapanel,&QWidget::show);
     trayIconMenu->addAction("More");
     trayIconMenu->addSeparator();
     trayIconMenu->addAction("Quit", qApp, &QCoreApplication::quit);
 
-    trayIcon = new QSystemTrayIcon(parent);
+    trayIcon = new QSystemTrayIcon(datapanel);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(QIcon(":/image/icon.svg"));
     trayIcon->setVisible(true);
@@ -22,7 +22,7 @@ void SystemTrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     // case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::Trigger:
     {
-        parent->show();
+        datapanel->show();
         qDebug()<<"Trigger";
         break;
     }

@@ -168,19 +168,21 @@ unsigned int Dao::query(QVector<Data> &datas, int startRow, int n, Filter &filte
     }
     case Time::week: {
         // 设置一周内的时间范围
+        QDateTime currentTime = QDateTime::currentDateTime();
+        QDateTime todayEnd = currentTime.date().addDays(1).startOfDay();
         QDateTime weekAgoDate = QDate::currentDate().addDays(-7).startOfDay();
-        filter = QString("created_at >= '%1'").arg(weekAgoDate.toString("yyyy-MM-dd hh:mm:ss"));
+        filter = QString("created_at >= '%1'  AND created_at < '%2'").arg(weekAgoDate.toString("yyyy-MM-dd hh:mm:ss")).arg(todayEnd.toString("yyyy-MM-dd hh:mm:ss"));
         break;
     }
     case Time::custom: {
         // 设置特定天的时间范围
         QDateTime specificDayStart(filters.startTime, QTime(0, 0, 0));
-        QDateTime specificDayEnd(filters.endTime, QTime(0, 0, 0));
+        QDateTime specificDayEnd(filters.endTime, QTime(23, 59, 59));
         filter = QString("created_at >= '%1' AND created_at < '%2'").arg(specificDayStart.toString("yyyy-MM-dd hh:mm:ss")).arg(specificDayEnd.toString("yyyy-MM-dd hh:mm:ss"));
         break;
     }
     default:
-        filter = QString("created_at"); //为了后面拼接“AND”
+        filter = QString("created_at >= 2024-03-20 '00:00:00'"); //为了后面拼接“AND”
         break;
     }
     qDebug()<<filter;
@@ -198,15 +200,16 @@ unsigned int Dao::query(QVector<Data> &datas, int startRow, int n, Filter &filte
 
         qDebug()<<filter;
     }
-
-    // 设置过滤条件
     model.setFilter(filter);
 
     // 执行查询
     if (!model.select()) {
         qDebug() << "Failed to execute query";
     }
-
+    while(model.canFetchMore())
+    {
+        model.fetchMore(); //break 256 limit
+    }
     int rowCount = model.rowCount();
     if (startRow >= rowCount) {
         qDebug() << "Start row exceeds row count" << rowCount;
@@ -215,7 +218,7 @@ unsigned int Dao::query(QVector<Data> &datas, int startRow, int n, Filter &filte
     int fetchCount = std::min(n, rowCount - startRow);
 
     QVector<Data> tempDatas;
-    for (int i = 0; i < fetchCount; ++i) {
+    for (int i = startRow; i < fetchCount+startRow; ++i) {
         QSqlRecord record = model.record(i);
         int id = record.value(0).toInt();
         QString created_at = record.value(1).toString();

@@ -1,4 +1,5 @@
 #include "service.h"
+#include "qimagereader.h"
 #include <QClipboard>
 #include <QDebug>
 #include <QMimeData>
@@ -11,6 +12,7 @@ bool Service::readClipboard(QClipboard *clipboard)
     const QMimeData *mimeData = clipboard->mimeData();
     QString clipboardText = clipboard->text();
     QFile file(clipboardText);
+    QImageReader reader(clipboardText);
     if (mimeData->hasImage()) {
         // 从剪贴板中获取图片
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
@@ -41,7 +43,11 @@ bool Service::readClipboard(QClipboard *clipboard)
         dao.insertOneData(Data(savePath,Type::image));
         // 创建一个标签用于显示图片
 
-    }else if(file.exists()){
+    }else if(file.exists()&&reader.canRead()){
+        dao.insertOneData(Data(clipboardText,Type::image));
+        qDebug() << "image save:" << clipboardText;
+    }
+    else if(file.exists()){
         dao.insertOneData(Data(clipboardText,Type::file));
         qDebug() << "FileDir save:" << clipboardText;
     }else{

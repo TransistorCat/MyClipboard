@@ -14,7 +14,7 @@ public:
 class TestDao: public QObject
 {
     Q_OBJECT
-    Dao Dao;
+    Dao dao;
 private slots:
     void testInit();
     void testInsertOneData();

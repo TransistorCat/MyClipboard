@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "systemtrayicon.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
     // s.start();
     // s.readClipboard();
     // datas=s.queryDB();
+    
+    SystemTrayIcon w;
+    // QIcon icon(":/image/icon.svg");
 
-    MainWindow w;
-    QIcon icon(":/image/icon.svg");
+    // w.setWindowIcon(icon);
 
-    w.setWindowIcon(icon);
-    w.show();
     a.exec();
 }
