@@ -16,18 +16,25 @@ bool Dao::init(const QString &DatabaseName){
 
         return false;
     }
-
+    QTimeZone systemTimeZone = QTimeZone::systemTimeZone();
+    QString timeZoneName = systemTimeZone.id();
+    qDebug()<<"timeZoneName: "<<timeZoneName;
+    QSqlQuery query(db);
+    QString pragmaQuery = QString("PRAGMA timezone='%1'").arg(timeZoneName);
+    if (!query.exec(pragmaQuery)) {
+        qDebug() << "Error: Failed to set SQLite3 timezone:" << query.lastError().text();
+        return 1;
+    }
     //create data
 
     QString create_sql = "CREATE TABLE IF NOT EXISTS data("
                          "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                         "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                         "created_at TIMESTAMP DEFAULT (datetime('now', 'localtime')), "
                          "content TEXT NOT NULL, "
                          "type INTEGER NOT NULL, "
                          "tap TEXT"
                          ")";
 
-    QSqlQuery query(db);
     if (!query.exec(create_sql)) {
         qDebug() << "Error: failed to create table";
         return false;

@@ -25,6 +25,7 @@ void SystemTrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason) {
         datapanel->show();
         datapanel->activateWindow();
         datapanel->raise();
+        datapanel->insertTableItem();
         qDebug()<<"Trigger";
         break;
     }

@@ -36,6 +36,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
 
     )
+if(WIN32)
+    set_target_properties(MyClipboard PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MyClipboard APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

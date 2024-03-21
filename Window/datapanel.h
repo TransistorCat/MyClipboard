@@ -21,6 +21,7 @@ class DataPanel : public QMainWindow
 public:
     DataPanel(QWidget *parent = nullptr, Service *service=nullptr);
     void setService(Service *);
+    void insertTableItem();
     ~DataPanel();
 
 private:
@@ -28,7 +29,7 @@ private:
     CustomTimePanel *timePanel;
     Service *service;
     Filter *filter;
-    void insertTableItem();
+
 
 private slots:
     void closeEvent(QCloseEvent *event) override;

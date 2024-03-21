@@ -78,8 +78,19 @@ void DataPanel::insertTableItem()
         item[2] = new QTableWidgetItem();
 
         if(result.datas[i].type == Type::image) {
-            auto pixmap = QPixmap(result.datas[i].content);
-            auto icon = QIcon(pixmap);
+            QPixmap originalPixmap(result.datas[i].content);
+            // 指定目标大小，例如压缩到 100x100 的尺寸
+            QSize targetSize(50, 50);
+            // 缩放图片
+            QPixmap scaledPixmap = originalPixmap.scaled(targetSize, Qt::KeepAspectRatio);
+            QIcon icon(scaledPixmap);
+            item[2]->setIcon(icon);
+
+        }
+
+        if(result.datas[i].type==Type::file){
+            QFileIconProvider iconProvider;
+            QIcon icon(iconProvider.icon(QFileInfo(result.datas[i].content)));
             item[2]->setIcon(icon);
         }
             item[2]->setText(result.datas[i].content); // 非图像类型直接设置文本
@@ -95,7 +106,8 @@ void DataPanel::insertTableItem()
 
 void DataPanel::closeEvent(QCloseEvent *event) {
     event->ignore(); // 忽略窗口关闭事件
-    hide(); // 隐藏窗口
+    ui->tableWidget->setRowCount(0);
+   hide();
 }
 
 
