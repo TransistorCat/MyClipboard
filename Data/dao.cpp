@@ -182,7 +182,7 @@ unsigned int Dao::query(QVector<Data> &datas, int startRow, int n, Filter &filte
         break;
     }
     default:
-        filter = QString("created_at >= 2024-03-20 '00:00:00'"); //为了后面拼接“AND”
+        filter = QString("created_at >= '2024-03-20 00:00:00'"); //为了后面拼接“AND”
         break;
     }
     qDebug()<<filter;

@@ -4,19 +4,22 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QApplication>
-QByteArray lastClipboardData;
+QImage lastClipboardData;
 bool Service::readClipboard(QClipboard *clipboard)
 {
 
     // 监听剪贴板内容改变信号
     const QMimeData *mimeData = clipboard->mimeData();
     QString clipboardText = clipboard->text();
+    if (clipboardText.startsWith("file:///")) {
+        clipboardText.remove(0, 8); // 去掉前8个字符（"file:///"的长度）
+    }
     QFile file(clipboardText);
     QImageReader reader(clipboardText);
     if (mimeData->hasImage()) {
         // 从剪贴板中获取图片
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
-        QByteArray currentData = mimeData->data("image/png");
+        // QByteArray currentData = mimeData->data("image/");
         QDir currentDir = QDir::current();
         QString currentPath = currentDir.absolutePath();
         QString saveDir=currentPath+"/Images/";
@@ -29,10 +32,10 @@ bool Service::readClipboard(QClipboard *clipboard)
                 return false;
             }
         }
-        if (currentData == lastClipboardData) {
+        if (image == lastClipboardData) {
             return false;
         } else {
-            lastClipboardData = currentData;
+            lastClipboardData = image;
         }
         // 保存图片到指定路径
         if (!image.save(savePath)) {

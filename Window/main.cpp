@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
     // datas=s.queryDB();
     
     SystemTrayIcon w;
-    // QIcon icon(":/image/icon.svg");
+    QIcon icon(":/image/icon.ico");
 
     // w.setWindowIcon(icon);
-
+    a.setWindowIcon(icon);
     a.exec();
 }

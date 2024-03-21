@@ -11,7 +11,7 @@ void SystemTrayIcon::createTrayIcon() {
 
     trayIcon = new QSystemTrayIcon(datapanel);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon(":/image/icon.svg"));
+    trayIcon->setIcon(QIcon(":/image/icon.ico"));
     trayIcon->setVisible(true);
 }
 
@@ -23,6 +23,8 @@ void SystemTrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     case QSystemTrayIcon::Trigger:
     {
         datapanel->show();
+        datapanel->activateWindow();
+        datapanel->raise();
         qDebug()<<"Trigger";
         break;
     }

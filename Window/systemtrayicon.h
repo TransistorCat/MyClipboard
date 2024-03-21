@@ -9,7 +9,8 @@ public:
     SystemTrayIcon() {
         service=new Service;
         service->start();
-        datapanel=new DataPanel(this,service);
+        datapanel=new DataPanel(nullptr,service);
+
         datapanel->setService(service);
         datapanel->show();
         createTrayIcon();

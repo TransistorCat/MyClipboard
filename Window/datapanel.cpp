@@ -26,7 +26,8 @@ DataPanel::DataPanel(QWidget *parent, Service *service)
      ui->tableWidget->verticalHeader()->setVisible(false);
      ui->tableWidget->verticalHeader()->setDefaultSectionSize(50);
      ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-     QIcon icon(":/image/icon.svg");
+     insertTableItem();
+     QIcon icon(":/image/icon.ico");
 
      this->setWindowIcon(icon);
 
@@ -92,10 +93,10 @@ void DataPanel::insertTableItem()
 
 }
 
-// void DataPanel::closeEvent(QCloseEvent *event) {
-    // event->ignore(); // 忽略窗口关闭事件
-    // hide(); // 隐藏窗口
-// }
+void DataPanel::closeEvent(QCloseEvent *event) {
+    event->ignore(); // 忽略窗口关闭事件
+    hide(); // 隐藏窗口
+}
 
 
 
