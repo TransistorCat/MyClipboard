@@ -5,6 +5,7 @@
 #include <QMimeData>
 #include <QApplication>
 QImage lastClipboardData;
+QString lastClipboardText;
 bool Service::readClipboard(QClipboard *clipboard)
 {
 
@@ -14,12 +15,16 @@ bool Service::readClipboard(QClipboard *clipboard)
     if (clipboardText.startsWith("file:///")) {
         clipboardText.remove(0, 8); // 去掉前8个字符（"file:///"的长度）
     }
+    if (lastClipboardText==clipboardText&&clipboardText!=""){
+        return true;
+    }
+    lastClipboardText=clipboardText;
     QFile file(clipboardText);
     QImageReader reader(clipboardText);
     if (mimeData->hasImage()) {
         // 从剪贴板中获取图片
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
-        // QByteArray currentData = mimeData->data("image/");
+        // QByteArray currentData = mimeData->data("image/png");
         QDir currentDir = QDir::current();
         QString currentPath = currentDir.absolutePath();
         QString saveDir=currentPath+"/Images/";
@@ -32,18 +37,25 @@ bool Service::readClipboard(QClipboard *clipboard)
                 return false;
             }
         }
-        if (image == lastClipboardData) {
+        if (image.bits() == lastClipboardData.bits() || (image.width() == lastClipboardData.width() && image.height() == lastClipboardData.height() && memcmp(image.bits(), lastClipboardData.bits(), image.bytesPerLine() * image.height()) == 0)) {
             return false;
         } else {
             lastClipboardData = image;
         }
         // 保存图片到指定路径
+        QFile imagefile(savePath);
+        if (imagefile.exists()){
+            qDebug() << "Image already saved";
+            return true;
+        }
+
         if (!image.save(savePath)) {
             qDebug() << "Failed to save image";
         } else {
             qDebug() << "Image saved successfully";
+            dao.insertOneData(Data(savePath,Type::image));
         }
-        dao.insertOneData(Data(savePath,Type::image));
+
         // 创建一个标签用于显示图片
 
     }else if(file.exists()&&reader.canRead()){
